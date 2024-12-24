@@ -6,7 +6,6 @@
 
 void d_printdata(DecodeInfo *decInfo)
 {
-    printf("Magic String: %s\n", decInfo->magic_str);
     printf("Source Image Name: %s\n", decInfo->src_image_fname);
     printf("Secret File Name: %s\n", decInfo->secret_fname);
     printf("Secret File Extension Size: %d\n", decInfo->file_extn_size);

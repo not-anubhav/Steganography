@@ -112,7 +112,7 @@ Status decode_byte_from_lsb(char *data, char *image_buffer)
     return e_success;
 }
 
-Status decode_data_from_image(char *data, int size, FILE *fptr_src_image)
+Status decode_data_from_image(char *data, uint size, FILE *fptr_src_image)
 {
     char image_buffer[MAX_IMAGE_BUF_SIZE];
     for( int i = 0; i < size; i++)
@@ -132,16 +132,16 @@ Status decode_data_from_image(char *data, int size, FILE *fptr_src_image)
 Status decode_magic_string(const char *magic_string, DecodeInfo *decInfo)
 {
     fseek(decInfo->fptr_src_image, MAX_HEADER_SIZE, SEEK_SET);
-    int size = strlen(MAGIC_STRING);
+    uint size = strlen(magic_string);
     char buffer[size + 1];
     
     if(decode_data_from_image(buffer, size, decInfo->fptr_src_image) == e_success)
     {
         buffer[size] = '\0';
-        printf("Size of Magic String : %ld\n", strlen(MAGIC_STRING));
+        printf("Size of Magic String : %ld\n", strlen(magic_string));
         printf("Size of Buffer : %ld\n", strlen(buffer));
         printf("Magic String : %s\n", buffer);
-        if (strcmp(buffer, MAGIC_STRING) == 0)
+        if (strcmp(buffer, magic_string) == 0)
         {
             return e_success;
         }

@@ -2,7 +2,7 @@
 #define COMMON_H
 
 /* Magic string to identify whether stegged or not */
-#define MAGIC_STRING "8;nfS!H9e+j+ppbY*/Tn+g:zRU2A&"
+#define MAGIC_STRING "8;nfS!H9e+j+ppbY*/Tn+g:zRU2"
 
 
 #endif      

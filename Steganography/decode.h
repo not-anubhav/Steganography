@@ -52,7 +52,7 @@ Status open_secret_file(DecodeInfo *decInfo);
 Status decode_magic_string(const char *magic_string, DecodeInfo *decInfo);
 
 /* Encode function, which does the real encoding */
-Status decode_data_from_image(char *data, int size, FILE *fptr_src_image);
+Status decode_data_from_image(char *data, uint size, FILE *fptr_src_image);
 
 /* Encode a byte into LSB of image data array */
 Status decode_byte_from_lsb(char *data, char *image_buffer);
