@@ -26,10 +26,10 @@ int main(int argc, char *argv[])
                     {
                         sleep(1);
                         printf(BGREEN"[INFO] Encoding Done Successfully\n"RESET);
-                        e_printdata(&encInfo);
                     }
                     else
                     {
+                        printf(RED "Encoding Failed\n" RESET);
                         e_failure;
                     }
                 }
@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
             }
             else
             {
+                printf(RED "Invalid Number of Arguments Passed for Encoding\n" RESET);
                 e_failure;
             }
         }
@@ -55,10 +56,10 @@ int main(int argc, char *argv[])
                     {
                         sleep(1);
                         printf(BGREEN"[INFO] Decoding Done Successfully\n"RESET);
-                        d_printdata(&decInfo);
                     }
                     else
                     {
+                        printf(RED "Decoding Failed\n" RESET);
                         e_failure;
                     }
                 }
@@ -69,12 +70,20 @@ int main(int argc, char *argv[])
             }
             else
             {
+                printf(RED "Invalid Number of Arguments Passed for Decoding\n" RESET);
                 return e_failure;
             }
+        }
+        if( check_operation_type(argv) == e_unsupported )
+        {
+            sleep(1);
+            printf(RED "Unsupported Operation Type Selected\n" RESET);
+            return e_failure;
         }
     }
     else
     {
+        printf(RED "Invalid Number of Arguments Passed\n" RESET);
         return e_failure;
     }
 }

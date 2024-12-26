@@ -6,13 +6,17 @@
 #include "common.h"
 #include "color.h"
 
+/*
+* 
+*/
 /* Function Definitions */
 
-/* Get image size
- * Input: Image file ptr
- * Output: width * height * bytes per pixel (3 in our case)
- * Description: In BMP Image, width is stored in offset 18,
- * and height after that. size is 4 bytes
+/* Copy the remaining data bytes in Destination Image
+ * Input: Source and Destination Image file ptr
+ * Output: Copies Remaining data bytes till End of File Into Destination Image
+ * Description: After copying the secret file data, Encode the remaining data bytes present
+ * in Source Image Till it reaches End of File into Destination Image
+ * Return Values : e_success
  */
 Status copy_remaining_img_data(FILE *fptr_src, FILE *fptr_dest)
 {
@@ -23,7 +27,15 @@ Status copy_remaining_img_data(FILE *fptr_src, FILE *fptr_dest)
     }
     return e_success;
 }
+/* Function Definitions */
 
+/* Encode Secret File Data in Destination Image
+ * Input: Secret File Data, Secret File Data Size, Source and Destination Image file ptr
+ * Output: Copies Data of Secret File Into Destination Image
+ * Description: Call encode data to image function to Encode the Data of Secret File Character by Character
+ * into Destination Image
+ * Return Values : e_success and e_failure
+ */
 Status encode_secret_file_data(EncodeInfo *encInfo)
 {
     rewind(encInfo->fptr_secret);
@@ -36,7 +48,6 @@ Status encode_secret_file_data(EncodeInfo *encInfo)
         image_data[len - 1] = '\0';
         len--;
     }
-    //printf(RED "Secret Data = %s\n" RESET, image_data);
     if(encode_data_to_image(image_data, encInfo->size_secret_file, encInfo->fptr_src_image, encInfo->fptr_stego_image) == e_success)
     {
         return e_success;
@@ -48,7 +59,15 @@ Status encode_secret_file_data(EncodeInfo *encInfo)
     }
     
 }
+/* Function Definitions */
 
+/* Encode Secret File Size in Destination Image
+ * Input: Secret File Size, Source and Destination Image file ptr
+ * Output: Copies Size of Secret File Into Destination Image
+ * Description: Read 32 Bytes of Data from Source Image, Encode the Size of Secret File
+ * in those 32 Bytes of Data by Calling encode size to lsb Function
+ * Return Values : e_success and e_failure
+ */
 Status encode_secret_file_size(long file_size, EncodeInfo *encInfo)
 {
     uint size = MAX_IMAGE_BUF_SIZE * (uint) sizeof(int);
@@ -68,7 +87,15 @@ Status encode_secret_file_size(long file_size, EncodeInfo *encInfo)
     }
     return e_success;
 }
+/* Function Definitions */
 
+/* Encode Secret File Extension in Destination Image
+ * Input: Secret File Extension, Secret File Extension Size, Source and Destination Image file ptr
+ * Output: Copies Extension of Secret File Into Destination Image
+ * Description: Call encode data to image function to Encode the Extension of Secret File Character by Character
+ * into Destination Image
+ * Return Values : e_success and e_failure
+ */
 Status encode_secret_file_extn(char *file_extn, EncodeInfo *encInfo)
 {
     int extn_size = strlen(file_extn);
@@ -82,15 +109,34 @@ Status encode_secret_file_extn(char *file_extn, EncodeInfo *encInfo)
         return e_failure;
     }
 }
+/* Function Definitions */
 
+/* Encode Unsigned Integer Size Into Buffer Array Containing 32 bytes of Image Data Bytes 
+ * Input: Size to Encode and Buffer Containing 32 Bytes of Image Data
+ * Output: Changes the Buffer Data Bytes From LSB Side of Source Image
+ * with Size From MSB Side to Encode In Destination Image  
+ * Description: Performs BitWise Operations Like Get, Clear, Set, Left Shift and Right Shift
+ * For Getting Last Byte of Data from Buffer Array of Source Image the Clearing that Byte
+ * and Setting it with MSB of Size to be Encoded for 32 times
+ * Return Values : e_success
+ */
 Status encode_size_to_lsb(uint size, char *buffer)
 {
     for( int i = 0; i < 32; i++)
     {
         buffer[i] = ((buffer[i] & (~1)) | ((size & (1 << (31 - i))) >> (31 - i)));
     }
+    return e_success;
 }
+/* Function Definitions */
 
+/* Encode Secret File Extension Size in Destination Image
+ * Input: Secret File Extension Size, Source and Destination Image file ptr
+ * Output: Copies Extension Size of Secret File Into Destination Image
+ * Description: Read 32 Bytes of Data from Source Image, Encode the Size of Extension
+ * in those 32 Bytes of Data by Calling size to lsb and using fwrite function
+ * Return Values : e_success and e_failure
+ */
 Status encode_secret_file_extn_size(long file_extn_size, EncodeInfo *encInfo)
 {
     uint size = MAX_IMAGE_BUF_SIZE * (uint) sizeof(int);
@@ -101,17 +147,29 @@ Status encode_secret_file_extn_size(long file_extn_size, EncodeInfo *encInfo)
         printf(RED "EXTN Encoding Failed\n" RESET);
         return e_failure;
     }
-    encode_size_to_lsb(file_extn_size, buffer);
-    int write = fwrite(buffer, sizeof(char), size, encInfo->fptr_stego_image);
-    if(write < size)
+    if( encode_size_to_lsb(file_extn_size, buffer) == e_success)
     {
-        printf(RED "EXTN Encoding Failed\n" RESET);
-        return e_failure;
+        int write = fwrite(buffer, sizeof(char), size, encInfo->fptr_stego_image);
+        if(write < size)
+        {
+            printf(RED "EXTN Encoding Failed\n" RESET);
+            return e_failure;
+        }
+        return e_success;
     }
-    return e_success;
 
 }
+/* Function Definitions */
 
+/* Encode Character Data Bytes Into Buffer Array Containing 8 bytes of Image Data Bytes 
+ * Input: Character Data Bytes to Encode and Buffer Containing 8 Bytes of Image Data
+ * Output: Changes the Buffer Data Bytes From LSB of Source Image
+ * with Character Data Bytes From MSB to Encode In Destination Image  
+ * Description: Performs BitWise Operations Like Get, Clear, Set, Left Shift and Right Shift
+ * For Getting Last Byte of Data from Buffer Array of Source Image the Clearing that Byte
+ * and Setting it with MSB of Data to be Encoded
+ * Return Values : e_success
+ */
 Status encode_byte_to_lsb(char data, char *image_buffer)
 {
     for( int i = 0; i < 8; i++)
@@ -120,7 +178,16 @@ Status encode_byte_to_lsb(char data, char *image_buffer)
     }
     return e_success;
 }
+/* Function Definitions */
 
+/* Encode Data Bytes Into Destination Image
+ * Input: Character Data, Character Data Size, Source and Destination Image file ptr
+ * Output: Copies Character Bytes of Data into Destination Image For 
+ * MAGIC STRING, Secret File Extension and Secret File Data
+ * Description: Read 8 Bytes of Data from Source Image, Encode the Character Data into 8 Bytes 
+ * and Write the Encoded 8 Bytes Inside Destination Image For Size times 
+ * Return Values : e_success and e_failure
+ */
 Status encode_data_to_image(char *data, int size, FILE *fptr_src_image, FILE *fptr_stego_image)
 {
     char image_buffer[MAX_IMAGE_BUF_SIZE];
@@ -144,7 +211,15 @@ Status encode_data_to_image(char *data, int size, FILE *fptr_src_image, FILE *fp
     }
     return e_success;
 }
- 
+/* Function Definitions */
+
+/* Encode Magic string into destination Image
+ * Input: Magic string, Magic String Size, Source and Destination Image file ptr
+ * Output: Copies Magic String into Destination Image After 54 Bytes of Header data
+ * Description: Call encode data to image function to encode the magic string character 
+ * based on the length of magic string into destination image
+ * Return Values : e_success and e_failure
+ */
 Status encode_magic_string(const char *magic_string, EncodeInfo *encInfo)
 {
     int size = strlen(MAGIC_STRING);
@@ -158,7 +233,14 @@ Status encode_magic_string(const char *magic_string, EncodeInfo *encInfo)
         return e_failure;
     }
 }
+/* Function Definitions */
 
+/* Copy BMP header from source bmp image to destination stego image
+ * Input: Source and Destination Image file ptr
+ * Output: Copies 54 Bytes of Header Data From src to dest image
+ * Description: Read 54 bytes of data from source bmp image and write the data to destination stego image
+ * Return Values : e_success and e_failure
+ */
 Status copy_bmp_header(FILE *fptr_src_image, FILE *fptr_dest_image)
 {
     rewind(fptr_src_image);
@@ -177,7 +259,14 @@ Status copy_bmp_header(FILE *fptr_src_image, FILE *fptr_dest_image)
     }
     return e_success;
 }
+/* Function Definitions */
 
+/* Check image capacity
+ * Input: EncodeInfo Structure members image capacity, secret file size, secret file extension size and MACRO MAGIC STRING
+ * Output: image capacity of source image, size of secret file, magic string length and extension size of secret file
+ * Description: Call Functions to get image capacity, file size and store the values inside the EncodeInfo Data Members
+ * Return Values : e_success and e_failure
+ */
 Status check_capacity(EncodeInfo* encInfo)
 {
     encInfo->image_capacity = get_image_size_for_bmp(encInfo->fptr_src_image, encInfo);
@@ -197,7 +286,14 @@ Status check_capacity(EncodeInfo* encInfo)
         return e_failure;
     }
 }
+/* Function Definitions */
 
+/* Get image size
+ * Input: Image file ptr
+ * Output: width * height * bytes per pixel (3 in our case)
+ * Description: In BMP Image, width is stored in offset 18,
+ * and height after that. size is 4 bytes
+ */
 uint get_file_size(FILE* fptr_secret)
 {
     fseek(fptr_secret, 0, SEEK_END);
@@ -276,21 +372,26 @@ Status open_files(EncodeInfo *encInfo)
     // No failure return e_success
     return e_success;
 }
-
+/*
+* Validate Command Line Arguments
+* Inputs: Command Line arguments
+* Output: source image name, secret file name, secret file extension, output image name
+* Return Values: e_success or e_failure
+*/
 Status read_and_validate_encode_args(char *argv[], EncodeInfo *encInfo)
 {
-    if(strcmp((strstr(argv[2], ".")), ".bmp") == 0)
+    if(strcmp((strstr(argv[2], ".")), ".bmp") == 0) /* Check For Passed Image Format as .bmp */
     {
         encInfo->src_image_fname = argv[2];
         char *extn;
         extn = strstr(argv[3], ".");
-        if((strcmp(extn, ".txt") == 0) || (strcmp(extn, ".sh") == 0) || (strcmp(extn, ".c") == 0))
+        if((strcmp(extn, ".txt") == 0) || (strcmp(extn, ".sh") == 0) || (strcmp(extn, ".c") == 0)) /* Check For Passed Secret File Format as .txt or .c or .sh */
         {
             encInfo->secret_fname = argv[3];
             strcpy(encInfo->extn_secret_file, extn);
-            if (!(argv[4] == NULL))
+            if (!(argv[4] == NULL)) /* Check Whether Output Image Argument is Passed or not ! */
             {
-                if(strcmp((strstr(argv[4], ".")), ".bmp") == 0)
+                if(strcmp((strstr(argv[4], ".")), ".bmp") == 0) /* If Output Image Argument is Passed check if it's Extension is .bmp */
                 {
                     encInfo->stego_image_fname = argv[4];
                 }
@@ -302,7 +403,7 @@ Status read_and_validate_encode_args(char *argv[], EncodeInfo *encInfo)
             }
             else
             {
-                encInfo->stego_image_fname = "stego image.bmp";
+                encInfo->stego_image_fname = "stego.bmp"; /* If not Passed Create Default File Named STEGO.bmp */
             }
             
         }
@@ -320,6 +421,12 @@ Status read_and_validate_encode_args(char *argv[], EncodeInfo *encInfo)
     return e_success;
 }
 
+/* 
+ * Perform Encoding
+ * Inputs: Call each Functions one by one to perform the encoding task
+ * Output: Information on Status of Function Call
+ * Return Value: e_success or e_failure, on file errors
+ */
 
 Status do_encoding(EncodeInfo *encInfo)
 {

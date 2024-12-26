@@ -138,9 +138,6 @@ Status decode_magic_string(const char *magic_string, DecodeInfo *decInfo)
     if(decode_data_from_image(buffer, size, decInfo->fptr_src_image) == e_success)
     {
         buffer[size] = '\0';
-        printf("Size of Magic String : %ld\n", strlen(magic_string));
-        printf("Size of Buffer : %ld\n", strlen(buffer));
-        printf("Magic String : %s\n", buffer);
         if (strcmp(buffer, magic_string) == 0)
         {
             return e_success;
@@ -205,7 +202,7 @@ Status read_and_validate_decode_args(char *argv[], DecodeInfo *decInfo)
                 printf(RED "Error: Memory Allocation Failed\n" RESET);
                 return e_failure;
             }
-            strcpy(decInfo->secret_fname, "message");
+            strcpy(decInfo->secret_fname, "Secret_Message");
         }
         return e_success;
     }

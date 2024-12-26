@@ -3,7 +3,7 @@
 
 #define BOLD "\033[1m"
 #define UNDERLINE "\033[4m"
-#define RED "\033[4;37m"
+#define RED "\033[4;31m"
 #define BRED "\033[1;31m\u2713"
 #define BGREEN "\033[1;32m\u2713"
 #define BYELLOW "\033[1;33m\u2713"

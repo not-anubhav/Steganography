@@ -37,7 +37,6 @@ typedef struct _EncodeInfo
 
 } EncodeInfo;
 
-void e_printdata(EncodeInfo *encInfo);
 /* Encoding function prototype */
 
 /* Check operation type */

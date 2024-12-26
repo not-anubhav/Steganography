@@ -32,8 +32,6 @@ typedef struct _DecodeInfo
 
 } DecodeInfo;
 
-void d_printdata(DecodeInfo *decInfo);
-
 /* Check operation type */
 OperationType check_operation_type(char *argv[]);
 
@@ -51,24 +49,24 @@ Status open_secret_file(DecodeInfo *decInfo);
 /* Store Magic String */
 Status decode_magic_string(const char *magic_string, DecodeInfo *decInfo);
 
-/* Encode function, which does the real encoding */
+/* Decode function, which does the real decoding */
 Status decode_data_from_image(char *data, uint size, FILE *fptr_src_image);
 
-/* Encode a byte into LSB of image data array */
+/* Decode a byte from LSB of image data array */
 Status decode_byte_from_lsb(char *data, char *image_buffer);
 
-/* Encode a size into LSB of image data array */
+/* Decode a size from LSB of image data array */
 Status decode_size_from_lsb(uint *size, char *buffer);
 
-/*Encode secret file extension size */
+/*Decode secret file extension size */
 Status decode_secret_file_extn_size(DecodeInfo *decInfo);
 
-/* Encode secret file extenstion */
+/* Decode secret file extenstion */
 Status decode_secret_file_extn(DecodeInfo *decInfo);
 
-/* Encode secret file size */
+/* Decode secret file size */
 Status decode_secret_file_size(DecodeInfo *decInfo);
 
-/* Encode secret file data*/
+/* Decode secret file data*/
 Status decode_secret_file_data(DecodeInfo *decInfo);
 #endif
