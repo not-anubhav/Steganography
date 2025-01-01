@@ -35,10 +35,10 @@ typedef struct _DecodeInfo
 /* Check operation type */
 OperationType check_operation_type(char *argv[]);
 
-/* Read and validate Encode args from argv */
+/* Read and validate decode args from argv */
 Status read_and_validate_decode_args(char *argv[], DecodeInfo *decInfo);
 
-/* Perform the encoding */
+/* Perform the decoding */
 Status do_decoding(DecodeInfo *decInfo);
 
 /* Get File pointers for i/p and o/p files */
@@ -46,7 +46,7 @@ Status open_image_file(DecodeInfo *decInfo);
 
 Status open_secret_file(DecodeInfo *decInfo);
 
-/* Store Magic String */
+/* Decode Magic String */
 Status decode_magic_string(const char *magic_string, DecodeInfo *decInfo);
 
 /* Decode function, which does the real decoding */
