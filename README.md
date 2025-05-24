@@ -1,4 +1,4 @@
-# Title Image Steganography using LSB mechanism
+# Title - Image Steganography using LSB mechanism
 
 # Project brief
 The art and science of hiding information by embedding messages within other,
@@ -10,6 +10,6 @@ This project also gives basic level understanding of image processing
 methodologies.
 
 # Technologies used
-Function pointers
-File I/O operations
+Function pointers, 
+File I/O operations, 
 Bitwise operations
